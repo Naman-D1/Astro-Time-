@@ -1,5 +1,5 @@
 #include "Navigation_Suite.hpp"
-#include "C:\Users\91982\OneDrive\Documents\coding\python_files\Space-Time\Models\SolarSailor.hpp"
+#include "../models/SolarSailor.hpp"
 #include <iostream>
 
 PhysicsValidation NavigationSuite::validateMission(const std::shared_ptr<Mission>& mission) {
