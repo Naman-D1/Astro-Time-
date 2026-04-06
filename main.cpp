@@ -2,6 +2,7 @@
 #include <memory>
 #include <vector>
 #include <algorithm>
+#include <limits>
 #include "models/BodyRegistry.hpp"
 #include "models/IonDrive.hpp"
 #include "models/RocketShip.hpp"
@@ -9,35 +10,41 @@
 #include "models/CargoMission.hpp"
 #include "models/CrewMission.hpp"
 #include "models/ResearchMission.hpp"
-#include "../models/Spacecraft.hpp"
+#include "models/Spacecraft.hpp"
 #include "Services/Navigation_Suite.hpp"
 #include "Services/MissionAnalyst.hpp"
 #include "Services/MissionValidator.hpp"
 #include "Services/ReportExporter.hpp"
-#include "../Services/SpaceException.hpp"
+#include "Services/SpaceException.hpp"
 #include "Services/MissionLog.hpp"
-
+#include "Services/AnimationUtils.hpp"
 
 using namespace std;
 
 int main() {
-    MissionLog missionLog; // create once, persists across missions
-    
+    // Force terminal to flush immediately (fixes animation on Windows)
+    setvbuf(stdout, NULL, _IONBF, 0);
+
+    MissionLog missionLog;
+
     try {
         std::shared_ptr<Mission> myMission;
         BodyRegistry registry;
 
         std::cout << "--- SPACE TRAVEL VISUALIZER & PLANNER ---\n";
+
+        AnimationUtils::spinningPlanet("Scanning known star systems");
+
         registry.listAll();
 
         // 2. Select destination
         std::string targetName;
         std::cout << "\nEnter Destination Name: ";
         std::cin >> targetName;
-        std::cin.ignore();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-        // ✅ Will throw DestinationNotFoundException if not found
         auto destination = registry.findByName(targetName);
+        AnimationUtils::spinningPlanet("Locking onto " + targetName);
 
         // 3. Select ship
         std::cout << "\nSelect Ship Type:\n";
@@ -57,6 +64,8 @@ int main() {
         else
             throw InvalidMissionException("Ship choice must be 1, 2 or 3.");
 
+        AnimationUtils::spinningPlanet("Initialising " + myShip->getName());
+
         // 4. Select mission type
         std::cout << "\nSelect Mission Type:\n";
         std::cout << "1. Cargo Mission\n2. Crew Mission\n3. Research Mission\n";
@@ -64,7 +73,6 @@ int main() {
         int missionChoice;
         if (!(std::cin >> missionChoice))
             throw InvalidMissionException("Invalid mission type input.");
-
 
         if (missionChoice == 1) {
             std::cout << "Enter cargo weight (tonnes): ";
@@ -87,24 +95,36 @@ int main() {
             std::cout << "Life support? (1 = Yes, 0 = No): ";
             bool lifeSupport;
             std::cin >> lifeSupport;
-            double travelDays = (destination->getDistanceFromEarth() * 1e6) / (myShip->getSpeed() * 86400.0);
+            double travelDays = (destination->getDistanceFromEarth() * 1e6)
+                                / (myShip->getSpeed() * 86400.0);
             myMission = std::make_shared<CrewMission>(
                 "Crew Mission to " + targetName,
                 myShip, destination, crewCount, lifeSupport, (int)travelDays
             );
 
         } else if (missionChoice == 3) {
+            // Clear buffer fully before getline
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
             std::cout << "Enter research topic: ";
             std::string topic;
-            std::cin.ignore();
             std::getline(std::cin, topic);
-            std::cout << "Enter sample collection target: ";
+
+            std::cout << "Enter sample collection target (at least 1): ";
             int samples;
-            if (!(std::cin >> samples) || samples < 0)
-                throw InvalidMissionException("Sample target must be a positive number.");
+            // ✅ FIX: blocks 0 and negatives, retries on bad input
+            while (!(std::cin >> samples) || samples <= 0) {
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                std::cout << "Invalid input. Enter a number of at least 1: ";
+            }
+
             std::cout << "Requires EVA? (1 = Yes, 0 = No): ";
             bool eva;
             std::cin >> eva;
+
+            double travelDays = (destination->getDistanceFromEarth() * 1e6)
+                                / (myShip->getSpeed() * 86400.0);
             myMission = std::make_shared<ResearchMission>(
                 "Research Mission to " + targetName,
                 myShip, destination, topic, samples, eva
@@ -114,11 +134,20 @@ int main() {
             throw InvalidMissionException("Mission choice must be 1, 2 or 3.");
         }
 
+        AnimationUtils::spinningPlanet("Calculating mission parameters");
+
         // 5. Validate mission
         ValidationResult validation = MissionValidator::validate(myMission);
         MissionValidator::printValidationReport(validation);
         if (!validation.passed) {
             std::cout << "\n>> Launch aborted. Fix errors and try again.\n";
+            std::cout << "\nView mission log? (1 = Yes, 0 = No): ";
+            int logChoice;
+            std::cin >> logChoice;
+            if (logChoice == 1) {
+                missionLog.displayAll();
+                missionLog.displaySummary();
+            }
             return 0;
         }
 
@@ -126,11 +155,12 @@ int main() {
         std::cout << "\n[RUNNING PHYSICS SIMULATION...]\n";
         PhysicsValidation report = NavigationSuite::validateMission(myMission);
 
+        AnimationUtils::spinningPlanet("Compiling mission briefing");
 
-        // 8. Print briefing
+        // 7. Print briefing
         MissionAnalyst::printFullBriefing(myMission, report);
 
-        // 9. Flight director analysis
+        // 8. Flight director analysis
         std::cout << "\n=== FLIGHT DIRECTOR'S ANALYSIS ===\n";
         if (myShip->getType() == "Ion Drive") {
             std::cout << "> PROPULSION: Ion Drive selected for high-efficiency deep space transit.\n";
@@ -160,7 +190,7 @@ int main() {
         else
             std::cout << "> SAFETY: HIGH RISK. Proceed with extreme caution.\n";
 
-        // 10. Export report
+        // 9. Export report
         std::cout << "\nExport mission report to file? (1 = Yes, 0 = No): ";
         int exportChoice;
         std::cin >> exportChoice;
@@ -168,12 +198,15 @@ int main() {
             std::string filename = myMission->getMissionName();
             std::replace(filename.begin(), filename.end(), ' ', '_');
             filename += "_report.txt";
-            ReportExporter::exportReport(myMission, report, validation,  filename);
+            ReportExporter::exportReport(myMission, report, validation, filename);
         }
-     myMission->setStatus("Completed");
-     missionLog.addMission(myMission);
+
+        // 10. Log completed mission
+        myMission->setStatus("Completed");
+        missionLog.addMission(myMission);
+
     // -------------------------------------------------------
-    // CATCH BLOCKS — each exception type handled separately
+    // CATCH BLOCKS
     // -------------------------------------------------------
     } catch (const DestinationNotFoundException& e) {
         std::cerr << "\n[ERROR] " << e.what() << "\n";
@@ -200,25 +233,22 @@ int main() {
         return 1;
 
     } catch (const SpaceException& e) {
-        // Catches any other SpaceException subclass
         std::cerr << "\n[SPACE ERROR] " << e.what() << "\n";
         return 1;
 
     } catch (const std::exception& e) {
-        // Catches any other standard exception
         std::cerr << "\n[UNEXPECTED ERROR] " << e.what() << "\n";
         return 1;
     }
-    // Add completed mission to log
-   
 
-    // Ask if user wants to see the log
+    // 11. View mission log
     std::cout << "\nView mission log? (1 = Yes, 0 = No): ";
     int logChoice;
     std::cin >> logChoice;
     if (logChoice == 1) {
-      missionLog.displayAll();
-      missionLog.displaySummary();
+        missionLog.displayAll();
+        missionLog.displaySummary();
     }
+
     return 0;
 }
