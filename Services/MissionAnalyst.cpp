@@ -1,8 +1,8 @@
 #include "MissionAnalyst.hpp"
-#include "../models/Mission.hpp"
-#include "../models/IonDrive.hpp"
-#include "../models/RocketShip.hpp"
-#include "../models/SolarSailor.hpp"
+#include "../Models/Mission.hpp"
+#include "../Models/IonDrive.hpp"
+#include "../Models/RocketShip.hpp"
+#include "../Models/SolarSailor.hpp"
 #include <iostream>
 #include <iomanip>
 

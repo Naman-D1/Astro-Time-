@@ -1,8 +1,8 @@
 #include "ReportExporter.hpp"
-#include "../models/Mission.hpp"
-#include "../models/CargoMission.hpp"
-#include "../models/CrewMission.hpp"
-#include "../models/ResearchMission.hpp"
+#include "../Models/Mission.hpp"
+#include "../Models/CargoMission.hpp"
+#include "../Models/CrewMission.hpp"
+#include "../Models/ResearchMission.hpp"
 #include <iostream>
 #include <ctime>
 

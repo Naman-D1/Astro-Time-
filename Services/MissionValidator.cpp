@@ -1,9 +1,9 @@
 #include "MissionValidator.hpp"
-#include "../models/CrewMission.hpp"
-#include "../models/CargoMission.hpp"
-#include "../models/ResearchMission.hpp"
-#include "../models/SpaceStation.hpp"
-#include "../models/Mission.hpp"
+#include "../Models/CrewMission.hpp"
+#include "../Models/CargoMission.hpp"
+#include "../Models/ResearchMission.hpp"
+#include "../Models/SpaceStation.hpp"
+#include "../Models/Mission.hpp"
 #include <iostream>
 
 ValidationResult MissionValidator::validate(const std::shared_ptr<Mission>& mission) {

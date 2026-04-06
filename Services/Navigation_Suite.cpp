@@ -1,7 +1,7 @@
 #include "Navigation_Suite.hpp"
-#include "../models/SolarSailor.hpp"
-#include "../models/RocketShip.hpp"
-#include "../models/IonDrive.hpp"
+#include "../Models/SolarSailor.hpp"
+#include "../Models/RocketShip.hpp"
+#include "../Models/IonDrive.hpp"
 #include <iostream>
 #include <cmath>
 

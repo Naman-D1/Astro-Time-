@@ -1,7 +1,7 @@
 #ifndef MISSION_ANALYST_HPP
 #define MISSION_ANALYST_HPP
 
-#include "../models/Mission.hpp"
+#include "../Models/Mission.hpp"
 #include "Navigation_Suite.hpp"
 #include <string>
 class MissionAnalyst {

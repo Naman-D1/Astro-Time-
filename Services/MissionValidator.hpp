@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include "../models/Mission.hpp"
+#include "../Models/Mission.hpp"
 
 struct ValidationResult {
     bool        passed;

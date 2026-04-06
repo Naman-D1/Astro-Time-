@@ -4,7 +4,7 @@
 #include <vector>
 #include <memory>
 #include <string>
-#include "../models/Mission.hpp"
+#include "../Models/Mission.hpp"
 
 class MissionLog {
 private:
