@@ -1,5 +1,6 @@
 #ifndef CREWMISSION_H
 #define CREWMISSION_H
+using namespace std;
 
 #include "Mission.hpp"
 
@@ -10,9 +11,9 @@ private:
     int    missionDurationDays;
 
 public:
-    CrewMission(std::string missionName,
-                std::shared_ptr<Spacecraft> spacecraft,
-                std::shared_ptr<CelestialBody> destination,
+    CrewMission(string missionName,
+                shared_ptr<Spacecraft> spacecraft,
+                shared_ptr<CelestialBody> destination,
                 int crewCount,
                 bool hasLifeSupport,
                 int missionDurationDays);
@@ -28,7 +29,7 @@ public:
     void setMissionDurationDays(int days);
 
     // Overrides
-    std::string getMissionType() const override;
+    string getMissionType() const override;
     double      calculateRiskScore() const override;
     int         getMinCrewRequired() const override;
 

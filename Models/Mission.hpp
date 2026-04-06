@@ -5,37 +5,38 @@
 #include <memory>
 #include "Spacecraft.hpp"
 #include "CelestialBody.hpp"
+using namespace std;
 
 class Mission {
 private:
-    std::string missionName;
-    std::shared_ptr<Spacecraft>    spacecraft;
-    std::shared_ptr<CelestialBody> destination;
-    std::string status; // "Planned", "Ongoing", "Completed", "Aborted"
+    string missionName;
+    shared_ptr<Spacecraft>    spacecraft;
+    shared_ptr<CelestialBody> destination;
+    string status; // "Planned", "Ongoing", "Completed", "Aborted"
 
 public:
-    Mission(std::string missionName,
-            std::shared_ptr<Spacecraft> spacecraft,
-            std::shared_ptr<CelestialBody> destination);
+    Mission(string missionName,
+            shared_ptr<Spacecraft> spacecraft,
+            shared_ptr<CelestialBody> destination);
 
     virtual ~Mission() = default;
 
     // Getters
-    std::string getMissionName() const;
-    std::string getStatus() const;
-    std::shared_ptr<Spacecraft>    getSpacecraft() const;
-    std::shared_ptr<CelestialBody> getDestination() const;
+    string getMissionName() const;
+    string getStatus() const;
+    shared_ptr<Spacecraft>    getSpacecraft() const;
+    shared_ptr<CelestialBody> getDestination() const;
 
     // Setters
-    void setStatus(std::string status);
-    void setMissionName(std::string name);
+    void setStatus(string status);
+    void setMissionName(string name);
 
     // Prediction methods (shared by all mission types)
     double calculateTravelTime() const;   // in days
     double calculateFuelNeeded() const;   // in tonnes
 
     // Pure virtual methods (each mission type handles differently)
-    virtual std::string getMissionType() const = 0;
+    virtual string getMissionType() const = 0;
     virtual double      calculateRiskScore() const = 0;
     virtual int         getMinCrewRequired() const = 0;
 

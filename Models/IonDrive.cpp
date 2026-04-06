@@ -1,8 +1,9 @@
 #include "IonDrive.hpp"
 #include <iostream>
 #include <algorithm>
+using namespace std;
 
-IonDrive::IonDrive(std::string name, double maxFuelCapacity,
+IonDrive::IonDrive(string name, double maxFuelCapacity,
                    double payloadCapacity, int maxCrew, double thrusterPower)
     : Spacecraft(name, maxFuelCapacity, payloadCapacity, maxCrew),
       thrusterPower(thrusterPower) {}
@@ -10,13 +11,13 @@ IonDrive::IonDrive(std::string name, double maxFuelCapacity,
 double IonDrive::getThrusterPower() const { return thrusterPower; }
 void IonDrive::setThrusterPower(double power) {
     if (power < 0) {
-        std::cerr << "Error: Thruster power cannot be negative.\n";
+        cerr << "Error: Thruster power cannot be negative.\n";
         return;
     }
     thrusterPower = power;
 }
 
-std::string IonDrive::getType() const { return "Ion Drive"; }
+string IonDrive::getType() const { return "Ion Drive"; }
 
 // Slower but very fuel efficient
 double IonDrive::getSpeed() const { return 50.0 + (thrusterPower * 0.01); } // km/s
@@ -25,10 +26,10 @@ double IonDrive::getFuelEfficiency() const { return 2000000.0 + (thrusterPower *
 
 double IonDrive::calculateFuelNeeded(double distanceKm) {
     double fuel = distanceKm / getFuelEfficiency();
-    return std::min(fuel, getMaxFuelCapacity());
+    return min(fuel, getMaxFuelCapacity());
 }
 
 void IonDrive::displayInfo() const {
     Spacecraft::displayInfo();
-    std::cout << "  Thruster Power     : " << thrusterPower << " kW\n";
+    cout << "  Thruster Power     : " << thrusterPower << " kW\n";
 }

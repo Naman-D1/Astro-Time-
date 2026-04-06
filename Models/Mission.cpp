@@ -1,24 +1,25 @@
 #include "Mission.hpp"
 #include <iostream>
+using namespace std;
 
-Mission::Mission(std::string missionName,
-                 std::shared_ptr<Spacecraft> spacecraft,
-                 std::shared_ptr<CelestialBody> destination)
+Mission::Mission(string missionName,
+                 shared_ptr<Spacecraft> spacecraft,
+                 shared_ptr<CelestialBody> destination)
     : missionName(missionName), spacecraft(spacecraft),
       destination(destination), status("Planned") {}
 
 // Getters
-std::string Mission::getMissionName() const { return missionName; }
-std::string Mission::getStatus() const { return status; }
-std::shared_ptr<Spacecraft>    Mission::getSpacecraft() const { return spacecraft; }
-std::shared_ptr<CelestialBody> Mission::getDestination() const { return destination; }
+string Mission::getMissionName() const { return missionName; }
+string Mission::getStatus() const { return status; }
+shared_ptr<Spacecraft>    Mission::getSpacecraft() const { return spacecraft; }
+shared_ptr<CelestialBody> Mission::getDestination() const { return destination; }
 
 // Setters
-void Mission::setMissionName(std::string name) { this->missionName = name; }
-void Mission::setStatus(std::string status) {
+void Mission::setMissionName(string name) { this->missionName = name; }
+void Mission::setStatus(string status) {
     if (status != "Planned" && status != "Ongoing" &&
         status != "Completed" && status != "Aborted") {
-        std::cerr << "Error: Invalid status.\n";
+        cerr << "Error: Invalid status.\n";
         return;
     }
     this->status = status;
@@ -40,18 +41,18 @@ double Mission::calculateFuelNeeded() const {
 }
 
 void Mission::displaySummary() const {
-    std::cout << "\n====================================\n";
-    std::cout << "  Mission  : " << missionName << "\n";
-    std::cout << "  Type     : " << getMissionType() << "\n";
-    std::cout << "  Status   : " << status << "\n";
-    std::cout << "  Ship     : " << spacecraft->getName()
+    cout << "\n====================================\n";
+    cout << "  Mission  : " << missionName << "\n";
+    cout << "  Type     : " << getMissionType() << "\n";
+    cout << "  Status   : " << status << "\n";
+    cout << "  Ship     : " << spacecraft->getName()
               << " (" << spacecraft->getType() << ")\n";
-    std::cout << "  Target   : " << destination->getName()
+    cout << "  Target   : " << destination->getName()
               << " (" << destination->getType() << ")\n";
-    std::cout << "------------------------------------\n";
-    std::cout << "  Travel Time  : " << calculateTravelTime()  << " days\n";
-    std::cout << "  Fuel Needed  : " << calculateFuelNeeded()  << " tonnes\n";
-    std::cout << "  Risk Score   : " << calculateRiskScore()   << "/10\n";
-    std::cout << "  Min Crew     : " << getMinCrewRequired()   << "\n";
-    std::cout << "====================================\n";
+    cout << "------------------------------------\n";
+    cout << "  Travel Time  : " << calculateTravelTime()  << " days\n";
+    cout << "  Fuel Needed  : " << calculateFuelNeeded()  << " tonnes\n";
+    cout << "  Risk Score   : " << calculateRiskScore()   << "/10\n";
+    cout << "  Min Crew     : " << getMinCrewRequired()   << "\n";
+    cout << "====================================\n";
 }

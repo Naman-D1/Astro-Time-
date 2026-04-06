@@ -2,6 +2,7 @@
 #define PLANET_H
 
 #include "CelestialBody.hpp"
+using namespace std;
 
 class Planet : public CelestialBody {
 private:
@@ -9,8 +10,8 @@ private:
     double atmosphericPressure; // in atm (Earth = 1.0)
 
 public:
-    Planet(std::string name, double distanceFromEarth, double gravity,
-           std::string description, bool hasAtmosphere, double atmosphericPressure);
+    Planet(string name, double distanceFromEarth, double gravity,
+           string description, bool hasAtmosphere, double atmosphericPressure);
 
     // Getters
     bool getHasAtmosphere() const;
@@ -21,7 +22,7 @@ public:
     void setAtmosphericPressure(double pressure);
 
     // Implementing pure virtual methods
-    std::string getType() const override;
+    string getType() const override;
     double getHazardLevel() const override;
 
     // Overriding displayInfo

@@ -1,9 +1,10 @@
 #include "Planet.hpp"
 #include <iostream>
 #include <algorithm>
+using namespace std;
 
-Planet::Planet(std::string name, double distanceFromEarth, double gravity,
-               std::string description, bool hasAtmosphere, double atmosphericPressure)
+Planet::Planet(string name, double distanceFromEarth, double gravity,
+               string description, bool hasAtmosphere, double atmosphericPressure)
     : CelestialBody(name, distanceFromEarth, gravity, description),
       hasAtmosphere(hasAtmosphere), atmosphericPressure(atmosphericPressure) {}
 
@@ -15,7 +16,7 @@ double Planet::getAtmosphericPressure() const { return atmosphericPressure; }
 void Planet::setHasAtmosphere(bool hasAtmosphere) { this->hasAtmosphere = hasAtmosphere; }
 void Planet::setAtmosphericPressure(double pressure) {
     if (pressure < 0) {
-        std::cerr << "Error: Atmospheric pressure cannot be negative.\n";
+        cerr << "Error: Atmospheric pressure cannot be negative.\n";
         return;
     }
     this->atmosphericPressure = pressure;
@@ -28,13 +29,13 @@ double Planet::getHazardLevel() const {
     else if (getGravity() > 9.0)   hazard += 2.0;
     if (!hasAtmosphere)       hazard += 3.0; // no air = dangerous
     if (atmosphericPressure > 50.0) hazard += 3.0; // crushing atmosphere (e.g. Venus)
-    return std::min(hazard, 10.0);
+    return min(hazard, 10.0);
 }
 
-std::string Planet::getType() const { return "Planet"; }
+string Planet::getType() const { return "Planet"; }
 
 void Planet::displayInfo() const {
     CelestialBody::displayInfo(); // call base display first
-    std::cout << "  Atmosphere          : " << (hasAtmosphere ? "Yes" : "No") << "\n";
-    std::cout << "  Atmospheric Pressure: " << atmosphericPressure << " atm\n";
+    cout << "  Atmosphere          : " << (hasAtmosphere ? "Yes" : "No") << "\n";
+    cout << "  Atmospheric Pressure: " << atmosphericPressure << " atm\n";
 }
